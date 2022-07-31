@@ -103,7 +103,143 @@ main()
 
 
 
+#managment bank system account
 
+class Account:
+    def __init__(self,email,password,name,phone,ssn,address):
+        # check for user 
+        self._ssn = ssn
+        self.email = email
+        self.name = name
+        self.phone = phone
+        self.address = address
+        self.__is_authenticated = False
+        self.set_password(password)
+        self.open_account()
+        
+    def set_password(self,password):
+        self.__password = password
+    
+    def reset_password(self,old_password,password):
+        if not self.check_password(old_password):
+            print('your old password is not correct')
+        self.__password = password
+    
+    def open_account(self):
+        self.account_no = self._ssn
+        self.balance = 0
+    
+    def check_password(self,password):
+        if password != self.__password:
+            return False
+        return True
+    def authentication(self,email,password):
+        if email != self.email:
+            return False 
+        return self.check_password(password)
+    
+    
+    def login(self,email,password):
+        self.__is_authenticated = self.authentication(email,password)
+    
+    def logout(self):
+        self.__is_authenticated = False
+    
+    def _is_authenecated(self):
+        return self.__is_authenticated       
+    
+    def withdroaw(self,amount):
+        if not self.is_authenecated():
+            print('user are not authorized')
+            return
+        if amount > self.check_balance():
+            print('there is no enough balance in your account')
+            return 
+        self.balance -= amount
+        
+    def deposit(self,amount):
+        if not self.is_authenecated():
+            print('user are not authorized')
+            return
+        self.balance += amount
+    
+    def check_balance(self):
+        if not self.is_authenecated():
+            print('user are not authorized')
+            return
+        return self.balance
+    
+    def print_info(self):
+        if not self.is_authenecated():
+            print('user are not authorized')
+        print(f'name = {self.name}  \
+              , balance = {self.balance} , phone = {self.phone} , \
+                  address = {self.address}')
+    
+    
+    
+class SavingAccount(Account):
+    def __init__(self,email,password,name,phone,ssn,address):
+        super().__init__(email, password, name, phone, ssn, address)
+        self.account_type = 'SA'
+    
+    
+    def deposit(self,amount):
+        if not self.is_authenecated():
+            print('user are not authorized')
+            return
+        profit = amount * 0.18
+        self.balance += amount
+        self.balance += profit
+
+class CurrentAccount(Account):
+    def __init__(self,email,password,name,phone,ssn,address):
+        super().__init__(email, password, name, phone, ssn, address)
+        self.account_type = 'CA'
+
+
+def login(accounts,password,email):
+    for account in accounts:
+        if account.login(email,password):
+               return account
+    return
+
+def main():
+    accounts = []
+    print('Welcom To Banck')
+    while True :
+        choice = None
+        account = None
+        print('To create Account Press 1')
+        print('To Login Press 2')
+        choice = input()
+        if choice =='1':
+            print('To create Current Account Press 1')
+            print('To create Saving Account Press 2')
+            choice = input()
+            name = input('Enter Name')
+            email = input('Enter email')
+            ssn = input('Enter SSN')
+            address = input('Enter address')
+            phone = input('Enter phone')
+            password = input('Enter Password')
+            if choice =='1':
+                account = CurrentAccount(email, password, name, phone, ssn, address)
+            if choice =='2':
+                account = SavingAccount(email, password, name, phone, ssn, address)
+            accounts.append(account)
+            print('your account has been created ')
+            continue
+        if choice == '2':
+            email = input('enter email')
+            password = input('enter password')
+            account = login(accounts,password,email)
+            if account == None :
+                print('can not find your account')
+                continue
+            print(account.check_balance())
+            
+main()
 
 
 
