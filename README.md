@@ -1,4 +1,4 @@
-# library managment system
+# library managment system and bank system
 
 class library:
     def _init_(self,email,password,ownermail,ownerpass,fullname,SSN):
